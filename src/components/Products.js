@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardMedia, Typography, ToggleButtonGroup, ToggleButton, Select, MenuItem, Button } from '@material-ui/core';
+import { Card, CardContent, CardMedia, Typography, ToggleButtonGroup, ToggleButton, Select, MenuItem, Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
-import { getCategories, getProducts } from '../Api';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { getCategories, getProducts, deleteProduct } from '../Api';
+import { useAuth } from '../context/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,10 +30,13 @@ const useStyles = makeStyles((theme) => ({
 const Products = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('default');
+  const [open, setOpen] = useState(false);
+  const [deleteProductId, setDeleteProductId] = useState(null);
 
   useEffect(() => {
     fetchCategories();
@@ -80,6 +86,26 @@ const Products = () => {
     history.push(`/products/${id}`);
   };
 
+  const handleEdit = (id) => {
+    history.push(`/edit-product/${id}`);
+  };
+
+  const handleDelete = (id) => {
+    setDeleteProductId(id);
+    setOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteProduct(deleteProductId);
+      setProducts(products.filter((product) => product.id !== deleteProductId));
+      setOpen(false);
+      alert(`Product deleted successfully`);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
   return (
     <div>
       <div className={classes.toolbar}>
@@ -116,10 +142,34 @@ const Products = () => {
                 <Button variant="contained" color="primary" onClick={() => handleBuy(product.id)}>
                   Buy
                 </Button>
+                {user?.isAdmin && (
+                  <>
+                    <IconButton color="primary" onClick={() => handleEdit(product.id)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton color="secondary" onClick={() => handleDelete(product.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
+                )}
               </CardContent>
             </Card>
           ))}
       </div>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure you want to delete this product?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} color="secondary">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
