@@ -8,6 +8,7 @@ import Home from './components/Home';
 import AddProduct from './components/AddProduct';
 import Products from './components/Products';
 import ProductDetails from './components/Productdetails';
+import CreateOrder from './components/CreateOrder';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/add-product" component={AddProduct} />
         <Route path="/products" element={<Products />} />
         <PrivateRoute path="/products/:id" element={<ProductDetails />} />
+        <Route path="/create-order" element={<CreateOrder />} />
         <Route path="/" component={Home} />
         </Routes>
     </Router>

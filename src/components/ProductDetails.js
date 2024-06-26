@@ -74,6 +74,9 @@ const ProductDetails = () => {
           <Button variant="contained" color="primary">
             Add to Cart
           </Button>
+          <Button className={classes.button} variant="contained" color="primary" onClick={handlePlaceOrder}>
+            Place Order
+          </Button>
         </CardContent>
       </Card>
     </div>

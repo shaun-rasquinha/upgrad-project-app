@@ -11,3 +11,7 @@ export const searchProducts = (query) => axios.get(`${API_URL}/products?search=$
 export const getCategories = () => axios.get(`${API_URL}/products/categories`);
 export const getProducts = () => axios.get(`${API_URL}/products`);
 export const getProduct = (id) => axios.get(`${API_URL}/products/${id}`);
+
+// Order API
+export const createOrder = (orderData) => axios.post(`${API_URL}/orders`, orderData);
+export const addAddress = (addressData) => axios.post(`${API_URL}/addresses`, addressData);
