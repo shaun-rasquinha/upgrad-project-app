@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { signUp } from '../api';
+import { signIn } from '../Api';
+import { useHistory } from 'react-router-dom';
 
-const SignUp = () => {
+const SignIn = () => {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
     password: '',
   });
+  const history = useHistory();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,21 +17,21 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await signUp(formData);
-      console.log('User signed up:', response.data);
+      const response = await signIn(formData);
+      localStorage.setItem('user', JSON.stringify(response.data));
+      history.push('/');
     } catch (error) {
-      console.error('Error signing up:', error);
+      console.error('Error signing in:', error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="name" placeholder="Name" onChange={handleChange} />
       <input type="email" name="email" placeholder="Email" onChange={handleChange} />
       <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-      <button type="submit">Sign Up</button>
+      <button type="submit">Sign In</button>
     </form>
   );
 };
 
-export default SignUp;
+export default SignIn;
