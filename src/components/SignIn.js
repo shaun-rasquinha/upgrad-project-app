@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { signIn } from '../Api';
-import { useHistory } from 'react-router-dom';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const history = useHistory();
+  const [error, setError] = useState(null);
+  const history = history();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,15 +22,19 @@ const SignIn = () => {
       history.push('/');
     } catch (error) {
       console.error('Error signing in:', error);
+      setError('Failed to sign in. Please check your credentials.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-      <button type="submit">Sign In</button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+        <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+        <button type="submit">Sign In</button>
+      </form>
+      {error && <p>{error}</p>}
+    </div>
   );
 };
 

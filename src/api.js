@@ -8,3 +8,6 @@ export const signIn = (credentials) => axios.post(`${API_URL}/auth`, credentials
 
 // Product API
 export const searchProducts = (query) => axios.get(`${API_URL}/products?search=${query}`);
+export const getCategories = () => axios.get(`${API_URL}/products/categories`);
+export const getProducts = () => axios.get(`${API_URL}/products`);
+export const getProduct = (id) => axios.get(`${API_URL}/products/${id}`);

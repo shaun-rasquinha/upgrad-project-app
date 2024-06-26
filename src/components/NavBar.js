@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, InputBase } from '@material-ui/core';
 import { ShoppingCart } from '@material-ui/icons';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { searchProducts } from '../Api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
@@ -42,12 +40,14 @@ const useStyles = makeStyles((theme) => ({
 
 const NavBar = () => {
   const classes = useStyles();
-  const history = useHistory();
+  const history = history();
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
-    // Check if user is logged in and if they are an admin
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setLoggedIn(true);
@@ -62,6 +62,21 @@ const NavBar = () => {
     history.push('/signin');
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await searchProducts(searchQuery);
+      console.log('Search results:', response.data);
+      // Handle the search results as needed
+    } catch (error) {
+      console.error('Error searching products:', error);
+    }
+  };
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -73,14 +88,16 @@ const NavBar = () => {
           </Typography>
           {loggedIn ? (
             <>
-              <div className={classes.search}>
+              <form onSubmit={handleSearchSubmit} className={classes.search}>
                 <InputBase
                   placeholder="Search…"
                   classes={{
                     input: classes.searchInput,
                   }}
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                 />
-              </div>
+              </form>
               <Button color="inherit" component={Link} to="/">
                 Home
               </Button>
